@@ -1,12 +1,12 @@
 <?php
 
-namespace WP2StaticAdvancedDetection;
+namespace WP2StaticAdvancedCrawling;
 
 class Controller {
     const VERSION = '0.1';
-    const PLUGIN_NAME = 'wp2static-addon-advanced-detection';
-    const OPTIONS_KEY = 'wp2static-addon-advanced-detection-options';
-    const HOOK = 'wp2static-addon-advanced-detection';
+    const PLUGIN_NAME = 'wp2static-addon-advanced-crawling';
+    const OPTIONS_KEY = 'wp2static-addon-advanced-crawling-options';
+    const HOOK = 'wp2static-addon-advanced-crawling';
 
 	public function __construct() {
 
@@ -16,7 +16,7 @@ class Controller {
         // initialize options DB
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_detection_options';
+        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -58,54 +58,12 @@ class Controller {
             15,
             1);
 
-        add_action(
-            'wp2static_deploy',
-            [ $this, 'generateZip' ],
-            15,
-            1);
-
-        add_action(
-            'wp2static_post_process_file',
-            [ $this, 'convertURLsToOffline' ],
-            15,
-            2);
-
-        add_action(
-            'wp2static_set_destination_url',
-            [ $this, 'setDestinationURL' ]);
-
-
-        add_action(
-            'wp2static_set_wordpress_site_url',
-            [ $this, 'modifyWordPressSiteURL' ]);
-
         if ( defined( 'WP_CLI' ) ) {
             \WP_CLI::add_command(
-                'wp2static zip',
-                [ 'WP2StaticAdvancedDetection\CLI', 'zip' ]);
+                'wp2static advanced_detection',
+                [ 'WP2StaticAdvancedCrawling\CLI', 'advanced_detection' ]);
         }
 	}
-
-    public function modifyWordPressSiteURL( $site_url ) {
-        return rtrim( $site_url, '/' );
-    }
-
-    public function setDestinationURL( $destination_url ) {
-        $options = $this->getOptions();
-
-        return $options['deployment_url']->value;
-    }
-
-    public function convertURLsToOffline( $file, $processed_site_path ) {
-        error_log('Zip Addon converting URLs to offline in file: ' . $file);
-        error_log('within ProcessedSite path: ' . $processed_site_path);
-
-        error_log('Detect type of file by name, extension or content type');
-
-        error_log('modify URL');
-
-        // other actions can process after this, based on priority
-    }
 
     public function addAdminNotices( $notices ) {
         $notices['errors'][] = 'added an error notice via zip plugin';
@@ -122,7 +80,7 @@ class Controller {
         global $wpdb;
         $options = [];
 
-        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_detection_options';
+        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
         $rows = $wpdb->get_results( "SELECT * FROM $table_name" );
 
@@ -140,24 +98,14 @@ class Controller {
     public static function seedOptions() : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_detection_options';
+        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
-
-        // 'detectArchives', // move to detection addon
-        // 'detectAttachments', // move to detection addon
-        // 'detectChildTheme', // on by default
-        // 'detectCommentPagination',// move to detection addon
-        // 'detectComments',// move to detection addon
-        // 'detectParentTheme',
-        // 'detectPluginAssets', // move to detection addon
-        // 'detectVendorCacheDirs', // move to detection addon
-        // 'detectWPIncludesAssets', // default include these (not that many..., maybe make disablable?)
-
+        // TODO: plop in here old advanced crawling options from core
 
         $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
         $query = $wpdb->prepare(
             $query_string,
-            'excludeURLs',
+            'bananarama',
             '',
             'Exclude URL Patterns',
             'Filter out any URLs matching these patterns (one per line)');
@@ -167,7 +115,7 @@ class Controller {
         $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
         $query = $wpdb->prepare(
             $query_string,
-            'additionalURLs',
+            'bananarama2',
             '',
             'Force-include URLs',
             'Add site-root relative URLs, one per line');
@@ -182,7 +130,7 @@ class Controller {
     public static function saveOption( $name, $value ) : void {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_detection_options';
+        $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
         $query_string = "INSERT INTO $table_name (name, value) VALUES (%s, %s);";
         $query = $wpdb->prepare( $query_string, $name, $value );
@@ -191,12 +139,12 @@ class Controller {
     }
 
     public function addOptionsTemplateVars( $template_vars ) {
-        $template_vars['wp2static_advanced_detection_addon_options'] = $this->getOptions();
+        $template_vars['wp2static_advanced_crawling_addon_options'] = $this->getOptions();
 
-        // find position of detection options
+        // find position of crawling options
         $deployment_options_position = 0;
         foreach( $template_vars['options_templates'] as $index => $options_template ) {
-          if (strpos($options_template, 'core-detection-options.php') !== false) {
+          if (strpos($options_template, 'core-crawling-options.php') !== false) {
             $deployment_options_position = $index + 1;
           } 
         } 
@@ -206,26 +154,19 @@ class Controller {
             $template_vars['options_templates'],
             $deployment_options_position,
             0, // # elements to remove
-            [__DIR__ . '/../views/detection-options.php']
+            [__DIR__ . '/../views/crawling-options.php']
         );
 
         return $template_vars;
     }
 
     public function uiSaveOptions() {
-        error_log('Advanced Detection Addon Saving Options, accessing $_POST');
+        error_log('Advanced Crawling Addon Saving Options, accessing $_POST');
 
         if (isset($_POST['deployment_url'])) {
             // TODO: validate URL
             $this->saveOption( 'deployment_url', $_POST['deployment_url'] );
         }
-    }
-
-    public function generateZip( $processed_site_path ) {
-        error_log('Zip Addon generating Zip');
-
-        $zip_archiver = new ZipArchiver();
-        $zip_archiver->generateArchive( $processed_site_path );
     }
 
     /*

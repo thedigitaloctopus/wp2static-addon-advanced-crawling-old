@@ -1,6 +1,6 @@
 {
-    "name": "wp2static/wp2static-addon-advanced-detection",
-    "description": "Advanced Detection Add-on for WP2Static.",
+    "name": "wp2static/wp2static-addon-advanced-crawling",
+    "description": "Advanced Crawling Add-on for WP2Static.",
     "homepage": "https://wp2static.com",
       "license": "UNLICENSE",
       "authors": [
@@ -12,10 +12,10 @@
       ],
     "type": "wordpress-plugin",
     "support": {
-        "issues": "https://github.com/WP2Static/wp2static-addon-advanced-detection/issues",
+        "issues": "https://github.com/WP2Static/wp2static-addon-advanced-crawling/issues",
         "forum": "https://wp2static.com/community",
         "docs": "https://wp2static.com/documentation",
-        "source": "https://github.com/WP2Static/wp2static-addon-advanced-detection"
+        "source": "https://github.com/WP2Static/wp2static-addon-advanced-crawling"
     },
     "repositories": [
         {
@@ -37,13 +37,13 @@
     },
     "autoload": {
         "psr-4": {
-            "WP2StaticAdvancedDetection\\": "src/"
+            "WP2StaticAdvancedCrawling\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "PHPStan\\WordPress\\": "tests/phpstan/",
-            "WP2StaticAdvancedDetection\\": "src/"
+            "WP2StaticAdvancedCrawling\\": "src/"
         }
     },
     "config": {
