@@ -17,10 +17,10 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'WP2STATIC_ADVANCED_DETECTION_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WP2STATIC_ADVANCED_DETECTION_VERSION', '0.1' );
+define( 'WP2STATIC_ADVANCED_CRAWLING_PATH', plugin_dir_path( __FILE__ ) );
+define( 'WP2STATIC_ADVANCED_CRAWLING_VERSION', '0.1' );
 
-require WP2STATIC_ADVANCED_DETECTION_PATH . 'vendor/autoload.php';
+require WP2STATIC_ADVANCED_CRAWLING_PATH . 'vendor/autoload.php';
 
 function run_wp2static_addon_advanced_crawling() {
 	$controller = new WP2StaticAdvancedCrawling\Controller();

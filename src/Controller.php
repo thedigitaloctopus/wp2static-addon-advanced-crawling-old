@@ -36,7 +36,7 @@ class Controller {
         // if deployment_url option doesn't exist, create:
         $options = $this->getOptions();
 
-        if ( ! isset( $options['excludeURLs'] ) ) {
+        if ( ! isset( $options['crawlPort'] ) ) {
             $this->seedOptions();
         }
 
@@ -101,24 +101,50 @@ class Controller {
         $table_name = $wpdb->prefix . 'wp2static_addon_advanced_crawling_options';
 
         // TODO: plop in here old advanced crawling options from core
+        /*
+            crawlPort
+            crawlDelay
+            crawlUserAgent
+            dontUseCrawlCaching
+        */
 
         $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
         $query = $wpdb->prepare(
             $query_string,
-            'bananarama',
+            'crawlPort',
             '',
-            'Exclude URL Patterns',
-            'Filter out any URLs matching these patterns (one per line)');
+            'Crawl Port',
+            'Set port when not using protocol default');
 
         $wpdb->query( $query );
 
         $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
         $query = $wpdb->prepare(
             $query_string,
-            'bananarama2',
+            'crawlDelay',
             '',
-            'Force-include URLs',
-            'Add site-root relative URLs, one per line');
+            'Crawl Delay',
+            'Ease server load by delaying by n seconds between URL crawls');
+
+        $wpdb->query( $query );
+
+        $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
+        $query = $wpdb->prepare(
+            $query_string,
+            'crawlUserAgent',
+            'WP2Static.com',
+            'User Agent',
+            'Override default user agent (WP2Static.com)');
+
+        $wpdb->query( $query );
+
+        $query_string = "INSERT INTO $table_name (name, value, label, description) VALUES (%s, %s, %s, %s);";
+        $query = $wpdb->prepare(
+            $query_string,
+            'dontUseCrawlCaching',
+            '',
+            'Disable Crawl Caching',
+            'Crawl all detected URLs each time (slower)');
 
         $wpdb->query( $query );
     }
