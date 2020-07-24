@@ -58,3 +58,6 @@
     <?php echo $view['wp2static_advanced_crawling_addon_options']['dontUseCrawlCaching']->value ? 'checked' : ''; ?> />
 
 <p><i><?php echo $view['wp2static_advanced_crawling_addon_options']['dontUseCrawlCaching']->description; ?></i></p>
+
+<input name='dontUseCrawlCaching' id='dontUseCrawlCaching' type='checkbox' />   
+<label for='dontUseCrawlCaching'>Disregard cache and crawl everything</label> 
